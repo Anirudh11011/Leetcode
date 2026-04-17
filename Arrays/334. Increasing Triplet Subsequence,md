@@ -1,0 +1,128 @@
+## 334. Increasing Triplet Subsequence
+
+🔗 https://leetcode.com/problems/increasing-triplet-subsequence/
+
+---
+
+## 🧩 Problem
+
+Given an integer array `nums`, return `true` if there exists a triple of indices `(i, j, k)` such that:
+
+* `i < j < k`
+* `nums[i] < nums[j] < nums[k]`
+
+If no such indices exist, return `false`.
+
+---
+
+## 📌 Examples
+
+### Example 1:
+
+**Input:**
+
+```python
+nums = [1,2,3,4,5]
+```
+
+**Output:**
+
+```python
+true
+```
+
+**Explanation:**
+
+Any triplet where `i < j < k` is valid.
+
+---
+
+### Example 2:
+
+**Input:**
+
+```python
+nums = [5,4,3,2,1]
+```
+
+**Output:**
+
+```python
+false
+```
+
+**Explanation:**
+
+No increasing triplet exists.
+
+---
+
+### Example 3:
+
+**Input:**
+
+```python
+nums = [2,1,5,0,4,6]
+```
+
+**Output:**
+
+```python
+true
+```
+
+**Explanation:**
+
+One valid triplet is `(1, 4, 5)` → `1 < 4 < 6`.
+
+---
+
+## 🔒 Constraints
+
+* `1 <= nums.length <= 5 * 10^5`
+* `-2^31 <= nums[i] <= 2^31 - 1`
+
+---
+
+## 💡 Approach (Greedy)
+
+* Maintain two variables:
+
+  * `l` → smallest value seen so far
+  * `r` → second smallest value greater than `l`
+* Traverse the array:
+
+  * If current number `<= l`, update `l`
+  * Else if current number `<= r`, update `r`
+  * Else:
+
+    * Found a number greater than both `l` and `r` → triplet exists
+* If no such number is found, return `False`
+
+---
+
+## ⏱ Complexity
+
+* **Time Complexity:** `O(n)`
+* **Space Complexity:** `O(1)`
+
+---
+
+## 🧠 Solution (Python)
+
+```python
+class Solution:
+    def increasingTriplet(self, nums: List[int]) -> bool:
+        l = float("inf")
+        r = float("inf")
+
+        for i in nums:
+            if i <= l:
+                l = i
+            elif i <= r:
+                r = i
+            else:
+                return True
+
+        return False
+```
