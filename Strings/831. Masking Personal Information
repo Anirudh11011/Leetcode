@@ -1,0 +1,284 @@
+## 831. Masking Personal Information
+
+🔗 [https://leetcode.com/problems/masking-personal-information/](https://leetcode.com/problems/masking-personal-information/)
+
+---
+
+## 🧩 Problem
+
+You are given a personal information string `s`, representing either an **email address** or a **phone number**.
+
+Return the masked personal information according to the following rules.
+
+### Email Address
+
+An email address consists of:
+
+* A name containing at least two English letters.
+* `'@'` symbol.
+* A domain name containing English letters and exactly one `'.'`.
+
+To mask an email:
+
+* Convert the entire email to lowercase.
+* Keep only the **first** and **last** character of the name.
+* Replace all characters in between with exactly **5 asterisks** `"*****"`.
+
+Example:
+
+```text
+LeetCode@LeetCode.com
+↓
+l*****e@leetcode.com
+```
+
+---
+
+### Phone Number
+
+A phone number:
+
+* Contains `10` to `13` digits.
+* The last `10` digits form the local number.
+* The remaining `0-3` digits form the country code.
+* May contain separators:
+
+```text
+'+', '-', '(', ')', ' '
+```
+
+To mask a phone number:
+
+* Remove all separators.
+* Mask digits except the last 4.
+
+Formats:
+
+| Country Code Length | Masked Format       |
+| ------------------- | ------------------- |
+| 0                   | `***-***-XXXX`      |
+| 1                   | `+*-***-***-XXXX`   |
+| 2                   | `+**-***-***-XXXX`  |
+| 3                   | `+***-***-***-XXXX` |
+
+`XXXX` represents the last 4 digits.
+
+---
+
+## 📌 Examples
+
+### Example 1:
+
+**Input:**
+
+```python
+s = "LeetCode@LeetCode.com"
+```
+
+**Output:**
+
+```python
+"l*****e@leetcode.com"
+```
+
+**Explanation:**
+
+`s` is an email address.
+
+* Convert to lowercase.
+* Keep only `'l'` and `'e'` from the name.
+* Replace middle characters with `*****`.
+
+---
+
+### Example 2:
+
+**Input:**
+
+```python
+s = "AB@qq.com"
+```
+
+**Output:**
+
+```python
+"a*****b@qq.com"
+```
+
+**Explanation:**
+
+`s` is an email address.
+
+Even though the name has only two letters, we still place exactly **5 asterisks** between the first and last letters.
+
+---
+
+### Example 3:
+
+**Input:**
+
+```python
+s = "1(234)567-890"
+```
+
+**Output:**
+
+```python
+"***-***-7890"
+```
+
+**Explanation:**
+
+After removing separators:
+
+```python
+"1234567890"
+```
+
+There are exactly `10` digits, so there is no country code.
+
+Masked format:
+
+```python
+***-***-7890
+```
+
+---
+
+## 🔒 Constraints
+
+* `s` is either a valid email or a valid phone number.
+
+If `s` is an email:
+
+* `8 <= s.length <= 40`
+* Contains uppercase/lowercase English letters.
+* Contains exactly one `'@'` and one `'.'`.
+
+If `s` is a phone number:
+
+* `10 <= s.length <= 20`
+* Contains digits, spaces, and symbols:
+
+```python
+'(', ')', '-', '+'
+```
+
+---
+
+## 💡 Approach
+
+### Case 1: Email
+
+* Convert the entire string to lowercase.
+* Find the index of `'@'`.
+* Keep:
+
+  * First character of the name.
+  * Last character before `'@'`.
+* Insert `"*****"` between them.
+* Append the domain part unchanged.
+
+---
+
+### Case 2: Phone Number
+
+* Remove all non-digit characters.
+
+* Count the total digits.
+
+  * Last `4` digits remain visible.
+  * First `6` digits of local number become:
+
+    ```python
+    ***-***
+    ```
+
+* Depending on the number of extra digits:
+
+  * `0` → no country code.
+  * `1` → `+*-`
+  * `2` → `+**-`
+  * `3` → `+***-`
+
+* Append the last `4` digits.
+
+---
+
+## ⏱ Complexity
+
+* **Time Complexity:** `O(n)`
+
+  * One pass to process email or phone number.
+
+* **Space Complexity:** `O(n)`
+
+  * For storing the cleaned phone number or result string.
+
+---
+
+## 🧠 Solution (Python)
+
+```python
+class Solution:
+    def maskPII(self, s: str) -> str:
+        a = "*****"
+        b = "***-***-"
+        c = "+*-***-***-"
+        d = "+**-***-***-"
+        e = "+***-***-***-"
+
+        res = ""
+
+        if '@' in s:
+            s = s.lower()
+            i = 0
+
+            while s[i] != '@':
+                if i == 0:
+                    res += s[i]
+
+                if s[i + 1] == '@':
+                    res += a
+                    res += s[i]
+
+                i += 1
+
+            res += s[i:]
+
+        else:
+            char = ['+', '-', '(', ')', ' ']
+
+            j = ''
+
+            for i in s:
+                if i not in char:
+                    j += i
+
+            s = j
+
+            last = ""
+
+            for i in s[::-1]:
+                if len(last) == 4:
+                    break
+
+                if i.isnumeric():
+                    last += i
+
+            if len(s) == 10:
+                res += b
+
+            if len(s) == 11:
+                res += c
+
+            if len(s) == 12:
+                res += d
+
+            if len(s) == 13:
+                res += e
+
+            res += last[::-1]
+
+        return res
+```
