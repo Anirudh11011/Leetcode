@@ -1,0 +1,115 @@
+## 1094. Car Pooling
+
+🔗 https://leetcode.com/problems/car-pooling/
+
+---
+
+## 🧩 Problem
+
+There is a car with `capacity` empty seats. The vehicle only drives east (i.e., it cannot turn around and drive west).
+
+You are given the integer `capacity` and an array `trips` where `trips[i] = [numPassengers, from, to]` indicates that the `i`th trip has `numPassengers` passengers and the locations to pick them up and drop them off are `from` and `to` respectively. The locations are given as the number of kilometers due east from the car's initial location.
+
+Passengers are dropped off **before** new passengers are picked up at the same location.
+
+Return `true` if it is possible to pick up and drop off all passengers for all the given trips, or `false` otherwise.
+
+---
+
+## 📌 Examples
+
+### Example 1:
+
+**Input:**
+
+```python
+trips = [[2,1,5],[3,3,7]], capacity = 4
+```
+
+**Output:**
+
+```python
+false
+```
+
+**Explanation:**
+
+At km 1, 2 passengers board → car holds 2. At km 3, 3 more board → car holds 5. Since `5 > capacity = 4`, return `false`.
+
+---
+
+### Example 2:
+
+**Input:**
+
+```python
+trips = [[2,1,5],[3,3,7]], capacity = 5
+```
+
+**Output:**
+
+```python
+true
+```
+
+**Explanation:**
+
+At km 1 → 2 passengers. At km 3 → 5 passengers. At km 5 → 2 exit, 3 remain. At km 7 → 3 exit, 0 remain. Never exceeds capacity.
+
+---
+
+## 🔒 Constraints
+
+* `1 <= trips.length <= 1000`
+* `trips[i].length == 3`
+* `1 <= numPassengers <= 100`
+* `0 <= from < to <= 1000`
+* `1 <= capacity <= 10^5`
+
+---
+
+## 💡 Approach (Event-Based Timeline / Sweep Line)
+
+* Convert each trip into **two events**:
+
+  * `[from, +numPassengers]` → passengers **board** at `from`
+  * `[to,  -numPassengers]` → passengers **exit** at `to`
+* **Sort** all events by location (time)
+* Sweep through events maintaining a running passenger count `temp`:
+
+  * Add the passenger change at each stop
+  * If `temp` ever exceeds `capacity` → return `False`
+* If the sweep completes without exceeding capacity → return `True`
+
+The negative sign on exit events is the key trick — boarding and exiting become a single unified **net change** at each stop, so a simple running sum tracks current occupancy.
+
+---
+
+## ⏱ Complexity
+
+* **Time Complexity:** `O(n log n)` — dominated by sorting the `2n` events
+* **Space Complexity:** `O(n)` — storing 2 events per trip
+
+---
+
+## 🧠 Solution (Python)
+
+```python
+class Solution:
+    def carPooling(self, trips: List[List[int]], capacity: int) -> bool:
+        time = []
+
+        for i in trips:
+            time.append([i[1],  i[0]])   # [from, +passengers] → board
+            time.append([i[2], -i[0]])   # [to,   -passengers] → exit
+
+        time.sort()
+
+        temp = 0
+        for i, j in time:
+            temp += j
+            if temp > capacity:
+                return False
+
+        return True
+```
