@@ -1,0 +1,129 @@
+## 606. Construct String from Binary Tree
+
+🔗 https://leetcode.com/problems/construct-string-from-binary-tree/
+
+---
+
+## 🧩 Problem
+
+Given the `root` of a binary tree, construct a string representation of the tree using **preorder traversal**, following these rules:
+
+* Each node is represented by its integer value
+* If a node has a **left child**, wrap the left subtree in parentheses immediately after the node's value
+* If a node has a **right child**, wrap the right subtree in parentheses after the left
+* If a node has **no left child but has a right child**, include an empty `()` placeholder for the left to preserve the structure
+* If a node has **no right child**, omit the trailing `()` entirely
+
+Return the resulting string.
+
+---
+
+## 📌 Examples
+
+### Example 1:
+
+**Input:**
+
+```
+    1
+   / \
+  2   3
+ /
+4
+root = [1,2,3,4]
+```
+
+**Output:**
+
+```python
+"1(2(4))(3)"
+```
+
+**Explanation:**
+
+The full form would be `"1(2(4)())(3()())"`, but trailing empty parentheses are omitted. `3` has no children so `()` is dropped; `2`'s right child is absent so its `()` is dropped too.
+
+---
+
+### Example 2:
+
+**Input:**
+
+```
+    1
+   / \
+  2   3
+   \
+    4
+root = [1,2,3,null,4]
+```
+
+**Output:**
+
+```python
+"1(2()(4))(3)"
+```
+
+**Explanation:**
+
+Node `2` has no left child but has a right child `4`, so we must keep the empty `()` for the left to avoid ambiguity. Omitting it would make `4` look like a left child.
+
+---
+
+## 🔒 Constraints
+
+* The number of nodes in the tree is in the range `[1, 10^4]`
+* `-1000 <= Node.val <= 1000`
+
+---
+
+## 💡 Approach (DFS / Preorder Recursion)
+
+* Recursively traverse the tree in **preorder** (root → left → right)
+* At each node:
+
+  * Start with `temp = str(node.val)`
+  * If left child exists → append `"(" + dfs(left) + ")"`
+  * Else if left is absent but right exists → append `"()"` as a placeholder
+  * If right child exists → append `"(" + dfs(right) + ")"`
+* The key rule: **only omit empty parentheses on the right side**, never on the left when a right child exists
+
+---
+
+## ⏱ Complexity
+
+* **Time Complexity:** `O(n)` — each node is visited exactly once
+* **Space Complexity:** `O(h)` — recursion stack depth, where `h` is the height of the tree (`O(n)` worst case for skewed trees)
+
+---
+
+## 🧠 Solution (Python)
+
+```python
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+
+class Solution:
+    def tree2str(self, root: Optional[TreeNode]) -> str:
+        def dfs(node):
+            if not node:
+                return ''
+
+            temp = str(node.val)
+
+            if node.left:
+                temp += "(" + dfs(node.left) + ')'
+            elif not node.left and node.right:
+                temp += "()"
+
+            if node.right:
+                temp += "(" + dfs(node.right) + ')'
+
+            return temp
+
+        return dfs(root)
+```
