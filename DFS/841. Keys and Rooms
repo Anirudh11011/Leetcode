@@ -1,0 +1,113 @@
+## 841. Keys and Rooms
+
+🔗 https://leetcode.com/problems/keys-and-rooms/
+
+---
+
+## 🧩 Problem
+
+There are `n` rooms labeled from `0` to `n - 1` and all the rooms are locked except for room `0`. Your goal is to visit all the rooms.
+
+However, you cannot enter a locked room without having its key. When you visit a room, you may find a set of distinct keys in it. Each key has a number on it, denoting which room it unlocks, and you can take all of them with you to unlock the other rooms.
+
+Given an array `rooms` where `rooms[i]` is the set of keys you can obtain by visiting room `i`, return `true` if you can visit all the rooms, or `false` otherwise.
+
+---
+
+## 📌 Examples
+
+### Example 1:
+
+**Input:**
+
+```python
+rooms = [[1],[2],[3],[]]
+```
+
+**Output:**
+
+```python
+true
+```
+
+**Explanation:**
+
+Visit room `0` → pick up key `1`. Visit room `1` → pick up key `2`. Visit room `2` → pick up key `3`. Visit room `3`. All rooms visited.
+
+---
+
+### Example 2:
+
+**Input:**
+
+```python
+rooms = [[1,3],[3,0,1],[2],[0]]
+```
+
+**Output:**
+
+```python
+false
+```
+
+**Explanation:**
+
+Room `2` can only be unlocked with key `2`, but key `2` is only found inside room `2` itself. We can never enter it.
+
+---
+
+## 🔒 Constraints
+
+* `n == rooms.length`
+* `2 <= n <= 1000`
+* `0 <= rooms[i].length <= 1000`
+* `1 <= sum(rooms[i].length) <= 3000`
+* `0 <= rooms[i][j] < n`
+* All values in `rooms[i]` are unique
+
+---
+
+## 💡 Approach (BFS / Graph Traversal)
+
+* Model the problem as a **directed graph** — each room is a node, and each key inside it is a directed edge to another room
+* Start at room `0` (the only unlocked room) and perform **BFS**:
+
+  * Maintain a `visited` boolean array, initialized to `False`
+  * Push room `0` onto the queue and mark it visited
+  * For each room dequeued, iterate over its keys:
+
+    * If the corresponding room hasn't been visited, mark it visited and enqueue it
+* After BFS completes, check if any room was never visited → return `False`
+* If all rooms are visited → return `True`
+
+---
+
+## ⏱ Complexity
+
+* **Time Complexity:** `O(n + k)` — `n` rooms visited, `k` total keys processed
+* **Space Complexity:** `O(n)` — visited array and queue each hold at most `n` entries
+
+---
+
+## 🧠 Solution (Python)
+
+```python
+class Solution:
+    def canVisitAllRooms(self, rooms: List[List[int]]) -> bool:
+        visited = [False] * len(rooms)
+        s = [0]
+        visited[0] = True
+
+        while s:
+            a = s.pop(0)
+            for i in rooms[a]:
+                if visited[i] == False:
+                    visited[i] = True
+                    s.append(i)
+
+        for i in visited:
+            if i == False:
+                return False
+
+        return True
+```
