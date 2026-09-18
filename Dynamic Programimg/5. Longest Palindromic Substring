@@ -1,0 +1,149 @@
+## 5. Longest Palindromic Substring
+
+🔗 https://leetcode.com/problems/longest-palindromic-substring/
+
+---
+
+## 🧩 Problem
+
+Given a string `s`, return the **longest palindromic substring** in `s`.
+
+> A **palindrome** is a string that reads the same forwards and backwards (e.g., `"aba"`, `"noon"`).
+
+---
+
+## 📌 Examples
+
+### Example 1:
+
+**Input:**
+
+```python
+s = "babad"
+```
+
+**Output:**
+
+```python
+"bab"
+```
+
+**Explanation:**
+
+Both `"bab"` and `"aba"` are valid answers.
+
+---
+
+### Example 2:
+
+**Input:**
+
+```python
+s = "cbbd"
+```
+
+**Output:**
+
+```python
+"bb"
+```
+
+**Explanation:**
+
+`"bb"` is the longest palindromic substring.
+
+---
+
+### Example 3:
+
+**Input:**
+
+```python
+s = "a"
+```
+
+**Output:**
+
+```python
+"a"
+```
+
+**Explanation:**
+
+A single character is always a palindrome.
+
+---
+
+### Example 4:
+
+**Input:**
+
+```python
+s = "ac"
+```
+
+**Output:**
+
+```python
+"a"
+```
+
+**Explanation:**
+
+Neither `"ac"` nor `"ca"` is a palindrome; the best we can do is a single character.
+
+---
+
+## 🔒 Constraints
+
+* `1 <= s.length <= 1000`
+* `s` consists of only digits and English letters (lowercase and/or uppercase)
+
+---
+
+## 💡 Approach (Expand Around Center)
+
+* Every palindrome has a **center** — either a single character (odd length) or between two characters (even length)
+* There are `2n - 1` possible centers for a string of length `n`
+* For each center, **expand outward** as long as the characters on both sides match
+* Track the longest palindrome found across all centers
+* Two expansion calls per index:
+  * `expand(i, i)` → odd-length palindromes
+  * `expand(i, i + 1)` → even-length palindromes
+
+---
+
+## ⏱ Complexity
+
+* **Time Complexity:** `O(n²)`
+* **Space Complexity:** `O(1)`
+
+---
+
+## 🧠 Solution (Python)
+
+```python
+class Solution:
+    def longestPalindrome(self, s: str) -> str:
+        res=""
+        leng=0
+        
+        for i in range(len(s)):
+                l=i
+                r=i
+                while(l>=0 and r<len(s) and s[l]==s[r]):
+                        if r-l+1 >leng:
+                                res=s[l:r+1]
+                                leng=r-l+1
+                        l=l-1
+                        r=r+1
+                l=i
+                r=i+1
+                while(l>=0 and r<len(s) and s[l]==s[r]):
+                        if r-l+1 >leng:
+                                res=s[l:r+1]
+                                leng=r-l+1
+                        l=l-1
+                        r=r+1
+        return res
+```
